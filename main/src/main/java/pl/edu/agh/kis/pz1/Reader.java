@@ -15,17 +15,25 @@ public class Reader extends Human {
             long timeToWait = (long) (1000 * (Math.random() * (maxTimeToWait - minTimeToWait) + minTimeToWait));
 
             try {
-                Thread.sleep(timeToWait * 1000);
+                Thread.sleep(timeToWait);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
+            if (shouldStop) {
+                break;
+            }
+
             library.requestRead(this);
+
+            if (shouldStop) {
+                break;
+            }
 
             long timeToBeInLibrary = (long) (1000 * (Math.random() * (maxTimeToBeInLibrary - minTimeToBeInLibrary) + minTimeToBeInLibrary));
 
             try {
-                Thread.sleep(timeToBeInLibrary * 1000);
+                Thread.sleep(timeToBeInLibrary);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

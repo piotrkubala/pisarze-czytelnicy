@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Writer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Modul glowny aplikacji - klasa Main z metoda main</a> &gt; <a href="index.source.html" class="el_package">pl.edu.agh.kis.pz1</a> &gt; <span class="el_source">Writer.java</span></div><h1>Writer.java</h1><pre class="source lang-java linenums">package pl.edu.agh.kis.pz1;
+
+public class Writer extends Human {
+    public Writer(Library libraryArg, float minTimeToWaitArg, float maxTimeToWaitArg, float minTimeToBeInLibraryArg, float maxTimeToBeInLibraryArg, int idArg) {
+<span class="nc" id="L5">        super(libraryArg, minTimeToWaitArg, maxTimeToWaitArg, minTimeToBeInLibraryArg, maxTimeToBeInLibraryArg, idArg);</span>
+<span class="nc" id="L6">        type = HumanType.WRITER;</span>
+<span class="nc" id="L7">    }</span>
+
+    @Override
+    public void run() {
+<span class="nc bnc" id="L11" title="All 2 branches missed.">        while (!shouldStop) {</span>
+<span class="nc" id="L12">            long timeToWait = (long) (1000 * (Math.random() * (maxTimeToWait - minTimeToWait) + minTimeToWait));</span>
+
+            try {
+<span class="nc" id="L15">                Thread.sleep(timeToWait);</span>
+<span class="nc" id="L16">            } catch (InterruptedException e) {</span>
+<span class="nc" id="L17">                e.printStackTrace();</span>
+<span class="nc" id="L18">            }</span>
+
+<span class="nc bnc" id="L20" title="All 2 branches missed.">            if (shouldStop) {</span>
+<span class="nc" id="L21">                break;</span>
+            }
+
+<span class="nc" id="L24">            library.requestWrite(this);</span>
+
+<span class="nc bnc" id="L26" title="All 2 branches missed.">            if (shouldStop) {</span>
+<span class="nc" id="L27">                break;</span>
+            }
+
+<span class="nc" id="L30">            long timeToBeInLibrary = (long) (1000 * (Math.random() * (maxTimeToBeInLibrary - minTimeToBeInLibrary) + minTimeToBeInLibrary));</span>
+
+            try {
+<span class="nc" id="L33">                Thread.sleep(timeToBeInLibrary);</span>
+<span class="nc" id="L34">            } catch (InterruptedException e) {</span>
+<span class="nc" id="L35">                e.printStackTrace();</span>
+<span class="nc" id="L36">            }</span>
+
+<span class="nc" id="L38">            library.finishWrite(this);</span>
+<span class="nc" id="L39">        }</span>
+<span class="nc" id="L40">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L44">        return &quot;Writer &quot; + id;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

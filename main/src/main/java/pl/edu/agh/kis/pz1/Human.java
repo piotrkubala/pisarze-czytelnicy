@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
 public abstract class Human extends Thread {
-    public Semaphore humanSemaphore = new Semaphore(1);
+    public Semaphore humanSemaphore = new Semaphore(0);
 
     // time in seconds
     protected float minTimeToWait;
@@ -36,7 +36,11 @@ public abstract class Human extends Thread {
 
     public void stopHuman() {
         shouldStop = true;
+        humanSemaphore.release();
     }
 
     public abstract String toString();
+
+    @Override
+    public abstract void run();
 }

@@ -1,10 +1,14 @@
 package pl.edu.agh.kis.pz1;
 
-import static junit.framework.TestCase.assertNotNull;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
+import static org.testng.Assert.*;
 
 public class MainTest {
+    @Test
+    public void testMain() {
+        assertNotNull(new Main());
+    }
 }
 
 
