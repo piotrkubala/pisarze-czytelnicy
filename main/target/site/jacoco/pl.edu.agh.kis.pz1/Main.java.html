@@ -2,49 +2,50 @@
 
 import sun.misc.Signal;
 
+import java.util.logging.Logger;
+
 /**
  * Schemat @author Paweł Skrzyński
  * Algorytm @author Piotr Kubala
  */
-<span class="fc" id="L9">public class Main {</span>
+<span class="fc" id="L11">public class Main {</span>
+<span class="fc" id="L12">    static Logger logger = Logger.getLogger(Main.class.getName());</span>
+
     public static void main(String[] args) {
-<span class="nc bnc" id="L11" title="All 2 branches missed.">        if (args.length != 2) {</span>
-<span class="nc" id="L12">            System.out.println(&quot;Wrong number of arguments&quot;);</span>
-<span class="nc" id="L13">            return;</span>
+<span class="nc bnc" id="L15" title="All 2 branches missed.">        if (args.length != 2) {</span>
+<span class="nc" id="L16">            logger.info(&quot;Wrong number of arguments&quot;);</span>
+<span class="nc" id="L17">            return;</span>
         }
 
         try {
-<span class="nc" id="L17">            int readersCount = Integer.parseInt(args[0]);</span>
-<span class="nc" id="L18">            int writersCount = Integer.parseInt(args[1]);</span>
+<span class="nc" id="L21">            int readersCount = Integer.parseInt(args[0]);</span>
+<span class="nc" id="L22">            int writersCount = Integer.parseInt(args[1]);</span>
 
-<span class="nc bnc" id="L20" title="All 4 branches missed.">            if (readersCount &lt; 0 || writersCount &lt; 0) {</span>
-<span class="nc" id="L21">                System.out.println(&quot;Wrong arguments&quot;);</span>
-<span class="nc" id="L22">                return;</span>
+<span class="nc bnc" id="L24" title="All 4 branches missed.">            if (readersCount &lt; 0 || writersCount &lt; 0) {</span>
+<span class="nc" id="L25">                logger.info(&quot;Wrong arguments&quot;);</span>
+<span class="nc" id="L26">                return;</span>
             }
 
-<span class="nc" id="L25">            Library library = new Library();</span>
+<span class="nc" id="L29">            Library library = new Library(5);</span>
 
-<span class="nc" id="L27">            Signal.handle(new Signal(&quot;INT&quot;), signal -&gt; {</span>
-<span class="nc" id="L28">                library.stopLibrary();</span>
-<span class="nc" id="L29">            });</span>
+<span class="nc" id="L31">            Signal.handle(new Signal(&quot;INT&quot;), signal -&gt; library.stopLibrary());</span>
 
-<span class="nc bnc" id="L31" title="All 2 branches missed.">            for (int i = 0; i &lt; readersCount; i++) {</span>
-<span class="nc" id="L32">                Reader reader = new Reader(library, 1, 2, 1, 3, i);</span>
-<span class="nc" id="L33">                library.addHuman(reader);</span>
-<span class="nc" id="L34">                reader.start();</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">            for (int i = 0; i &lt; readersCount; i++) {</span>
+<span class="nc" id="L34">                Reader reader = new Reader(library, 1, 2, 1, 3, i);</span>
+<span class="nc" id="L35">                library.addHuman(reader);</span>
+<span class="nc" id="L36">                reader.start();</span>
             }
 
-<span class="nc bnc" id="L37" title="All 2 branches missed.">            for (int i = 0; i &lt; writersCount; i++) {</span>
-<span class="nc" id="L38">                Writer writer = new Writer(library, 1, 2, 4, 6, i);</span>
-<span class="nc" id="L39">                library.addHuman(writer);</span>
-<span class="nc" id="L40">                writer.start();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">            for (int i = 0; i &lt; writersCount; i++) {</span>
+<span class="nc" id="L40">                Writer writer = new Writer(library, 1, 2, 4, 6, i);</span>
+<span class="nc" id="L41">                library.addHuman(writer);</span>
+<span class="nc" id="L42">                writer.start();</span>
             }
 
-<span class="nc" id="L43">            library.processWaitingQueue();</span>
-<span class="nc" id="L44">        } catch (NumberFormatException e) {</span>
-<span class="nc" id="L45">            System.out.println(&quot;Wrong arguments&quot;);</span>
-<span class="nc" id="L46">            return;</span>
-<span class="nc" id="L47">        }</span>
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L45">            library.processWaitingQueue();</span>
+<span class="nc" id="L46">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L47">            logger.info(&quot;Wrong arguments&quot;);</span>
+<span class="nc" id="L48">        }</span>
+<span class="nc" id="L49">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

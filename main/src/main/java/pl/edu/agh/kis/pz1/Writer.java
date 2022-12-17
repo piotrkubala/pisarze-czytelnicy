@@ -11,31 +11,21 @@ public class Writer extends Human {
         while (!shouldStop) {
             long timeToWait = (long) (1000 * (Math.random() * (maxTimeToWait - minTimeToWait) + minTimeToWait));
 
-            try {
-                Thread.sleep(timeToWait);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            sleepForTime(timeToWait);
+
+            if (!shouldStop) {
+                library.requestWrite(this);
+
+                if (shouldStop) {
+                    break;
+                }
+
+                long timeToBeInLibrary = (long) (1000 * (Math.random() * (maxTimeToBeInLibrary - minTimeToBeInLibrary) + minTimeToBeInLibrary));
+
+                sleepForTime(timeToBeInLibrary);
+
+                library.finishWrite(this);
             }
-
-            if (shouldStop) {
-                break;
-            }
-
-            library.requestWrite(this);
-
-            if (shouldStop) {
-                break;
-            }
-
-            long timeToBeInLibrary = (long) (1000 * (Math.random() * (maxTimeToBeInLibrary - minTimeToBeInLibrary) + minTimeToBeInLibrary));
-
-            try {
-                Thread.sleep(timeToBeInLibrary);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            library.finishWrite(this);
         }
     }
 

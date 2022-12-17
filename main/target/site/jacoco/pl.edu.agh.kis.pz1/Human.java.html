@@ -4,7 +4,9 @@ import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
 public abstract class Human extends Thread {
-<span class="nc" id="L7">    public Semaphore humanSemaphore = new Semaphore(0);</span>
+<span class="nc" id="L7">    protected Logger logger = Logger.getLogger(Human.class.getName());</span>
+
+<span class="nc" id="L9">    public final Semaphore humanSemaphore = new Semaphore(0);</span>
 
     // time in seconds
     protected float minTimeToWait;
@@ -14,31 +16,57 @@ public abstract class Human extends Thread {
     protected float maxTimeToBeInLibrary;
     protected Library library;
 
-<span class="nc" id="L17">    protected boolean shouldStop = false;</span>
+<span class="nc" id="L19">    protected boolean shouldStop = false;</span>
 
     protected int id;
 
-<span class="nc" id="L21">    public enum HumanType {</span>
-<span class="nc" id="L22">        READER,</span>
-<span class="nc" id="L23">        WRITER</span>
+<span class="nc" id="L23">    public enum HumanType {</span>
+<span class="nc" id="L24">        READER,</span>
+<span class="nc" id="L25">        WRITER</span>
     }
 
     protected HumanType type;
 
-<span class="nc" id="L28">    public Human(Library libraryArg, float minTimeToWaitArg, float maxTimeToWaitArg, float minTimeToBeInLibraryArg, float maxTimeToBeInLibraryArg, int idArg) {</span>
-<span class="nc" id="L29">        library = libraryArg;</span>
-<span class="nc" id="L30">        minTimeToWait = minTimeToWaitArg;</span>
-<span class="nc" id="L31">        maxTimeToWait = maxTimeToWaitArg;</span>
-<span class="nc" id="L32">        minTimeToBeInLibrary = minTimeToBeInLibraryArg;</span>
-<span class="nc" id="L33">        maxTimeToBeInLibrary = maxTimeToBeInLibraryArg;</span>
-<span class="nc" id="L34">        id = idArg;</span>
-<span class="nc" id="L35">    }</span>
+<span class="nc" id="L30">    protected Human(Library libraryArg, float minTimeToWaitArg, float maxTimeToWaitArg, float minTimeToBeInLibraryArg, float maxTimeToBeInLibraryArg, int idArg) {</span>
+<span class="nc" id="L31">        library = libraryArg;</span>
+<span class="nc" id="L32">        minTimeToWait = minTimeToWaitArg;</span>
+<span class="nc" id="L33">        maxTimeToWait = maxTimeToWaitArg;</span>
+<span class="nc" id="L34">        minTimeToBeInLibrary = minTimeToBeInLibraryArg;</span>
+<span class="nc" id="L35">        maxTimeToBeInLibrary = maxTimeToBeInLibraryArg;</span>
+<span class="nc" id="L36">        id = idArg;</span>
+<span class="nc" id="L37">    }</span>
 
     public void stopHuman() {
-<span class="nc" id="L38">        shouldStop = true;</span>
-<span class="nc" id="L39">        humanSemaphore.release();</span>
-<span class="nc" id="L40">    }</span>
+<span class="nc" id="L40">        shouldStop = true;</span>
+<span class="nc" id="L41">        humanSemaphore.release();</span>
+<span class="nc" id="L42">    }</span>
 
+    public void writeToLoggerInfo(String message) {
+<span class="nc bnc" id="L45" title="All 4 branches missed.">        if (logger != null &amp;&amp; logger.isLoggable(java.util.logging.Level.INFO)) {</span>
+<span class="nc" id="L46">            logger.info(message);</span>
+        }
+<span class="nc" id="L48">    }</span>
+
+    public void writeToLoggerSevere(String message) {
+<span class="nc bnc" id="L51" title="All 4 branches missed.">        if (logger != null &amp;&amp; logger.isLoggable(java.util.logging.Level.SEVERE)) {</span>
+<span class="nc" id="L52">            logger.severe(message);</span>
+        }
+<span class="nc" id="L54">    }</span>
+
+    public void sleepForTime(long time) {
+        try {
+<span class="nc" id="L58">            Thread.sleep(time);</span>
+<span class="nc" id="L59">        } catch (InterruptedException ie) {</span>
+<span class="nc" id="L60">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L61">            sb.append(&quot;InterruptedException: &quot;);</span>
+<span class="nc" id="L62">            sb.append(ie);</span>
+
+<span class="nc" id="L64">            writeToLoggerSevere(sb.toString());</span>
+<span class="nc" id="L65">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L66">        }</span>
+<span class="nc" id="L67">    }</span>
+
+    @Override
     public abstract String toString();
 
     @Override

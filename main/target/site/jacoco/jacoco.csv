@@ -1,8 +1,8 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Human,37,0,0,0,13,0,2,0,2,0
+Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Human,91,0,8,0,29,0,9,0,5,0
 Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Human.HumanType,24,0,0,0,3,0,1,0,1,0
-Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Library.CustomRecordFormatter,49,0,2,0,12,0,3,0,2,0
-Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Library,326,0,10,0,80,0,16,0,11,0
-Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Writer,81,0,6,0,23,0,6,0,3,0
-Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Reader,81,0,6,0,23,0,6,0,3,0
-Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Main,94,3,10,0,26,1,7,1,2,1
+Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Library.CustomRecordFormatter,48,0,2,0,12,0,3,0,2,0
+Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Library,371,0,18,0,101,0,21,0,12,0
+Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Writer,74,0,6,0,16,0,6,0,3,0
+Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Reader,74,0,6,0,16,0,6,0,3,0
+Modul glowny aplikacji - klasa Main z metoda main,pl.edu.agh.kis.pz1,Main,94,8,10,0,23,2,7,2,2,2

@@ -2,14 +2,18 @@ package pl.edu.agh.kis.pz1;
 
 import sun.misc.Signal;
 
+import java.util.logging.Logger;
+
 /**
  * Schemat @author Paweł Skrzyński
  * Algorytm @author Piotr Kubala
  */
 public class Main {
+    static Logger logger = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Wrong number of arguments");
+            logger.info("Wrong number of arguments");
             return;
         }
 
@@ -18,15 +22,13 @@ public class Main {
             int writersCount = Integer.parseInt(args[1]);
 
             if (readersCount < 0 || writersCount < 0) {
-                System.out.println("Wrong arguments");
+                logger.info("Wrong arguments");
                 return;
             }
 
-            Library library = new Library();
+            Library library = new Library(5);
 
-            Signal.handle(new Signal("INT"), signal -> {
-                library.stopLibrary();
-            });
+            Signal.handle(new Signal("INT"), signal -> library.stopLibrary());
 
             for (int i = 0; i < readersCount; i++) {
                 Reader reader = new Reader(library, 1, 2, 1, 3, i);
@@ -42,8 +44,7 @@ public class Main {
 
             library.processWaitingQueue();
         } catch (NumberFormatException e) {
-            System.out.println("Wrong arguments");
-            return;
+            logger.info("Wrong arguments");
         }
     }
 }

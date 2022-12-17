@@ -7,7 +7,14 @@ import static org.testng.Assert.*;
 public class MainTest {
     @Test
     public void testMain() {
-        assertNotNull(new Main());
+        // given
+        Main main;
+
+        // when
+        main = new Main();
+
+        // then
+        assertNotNull(main);
     }
 }
 

@@ -2,7 +2,7 @@ package pl.edu.agh.kis.pz1;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -12,7 +12,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class Library {
-    Logger logger = Logger.getLogger(Library.class.getName());
+    final Logger logger = Logger.getLogger(Library.class.getName());
 
     /**
      * Formatter for the logger.
@@ -27,7 +27,7 @@ public class Library {
                 Throwable t = r.getThrown();
                 try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
                     t.printStackTrace(pw);
-                    sb.append(sw.toString());
+                    sb.append(sw);
                 } catch (Exception ex) {
                     // ignore all exceptions here
                 }
@@ -48,13 +48,7 @@ public class Library {
 
     BlockingQueue<Human> waitingQueue = new LinkedBlockingQueue<>();
 
-    Vector<Human> humans = new Vector<>();
-
-    public Library() {
-        maxReaders = 5;
-
-        createSemaphoreAndConfigureLogger();
-    }
+    ArrayList<Human> humans = new ArrayList<>();
 
     public Library(int maxReadersArg) {
         maxReaders = maxReadersArg;
@@ -87,7 +81,7 @@ public class Library {
         sb.append(writersCount);
         sb.append("\n------ Queue info end ------");
 
-        logger.info(sb.toString());
+        writeToLoggerInfo(sb.toString());
     }
 
     public void processWaitingQueue() {
@@ -105,11 +99,19 @@ public class Library {
 
                 if (human.type == Human.HumanType.READER) {
                     readerAndWriterSemaphore.acquireUninterruptibly();
-                    logger.info(human.toString() + " is reading");
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(human);
+                    sb.append(" is reading");
+
+                    writeToLoggerInfo(sb.toString());
                     readersCount++;
                 } else {
                     readerAndWriterSemaphore.acquireUninterruptibly(maxReaders);
-                    logger.info(human.toString() + " is writing");
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(human);
+                    sb.append(" is writing");
+
+                    writeToLoggerInfo(sb.toString());
                     writersCount++;
                 }
                 human.humanSemaphore.release();
@@ -118,7 +120,7 @@ public class Library {
     }
 
     public void stopLibrary() {
-        logger.info("Stopping library");
+        writeToLoggerInfo("Stopping library");
 
         for (Human human : humans) {
             human.stopHuman();
@@ -128,11 +130,15 @@ public class Library {
         waitingQueue.clear();
         librarySemaphore.release(humans.size());
 
-        logger.info("Library stopped");
+        writeToLoggerInfo("Library stopped");
     }
 
     public void requestRead(Reader reader) {
-        logger.info(reader.toString() + " requested read");
+        StringBuilder sb = new StringBuilder();
+        sb.append(reader);
+        sb.append(" wants to read");
+
+        writeToLoggerInfo(sb.toString());
         waitingQueue.add(reader);
 
         librarySemaphore.release();
@@ -140,7 +146,11 @@ public class Library {
     }
 
     public void requestWrite(Writer writer) {
-        logger.info(writer.toString() + " requested write");
+        StringBuilder sb = new StringBuilder();
+        sb.append(writer);
+        sb.append(" wants to write");
+
+        writeToLoggerInfo(sb.toString());
         waitingQueue.add(writer);
 
         librarySemaphore.release();
@@ -148,7 +158,12 @@ public class Library {
     }
 
     public void finishRead(Reader reader) {
-        logger.info(reader.toString() + " finished reading");
+        StringBuilder sb = new StringBuilder();
+        sb.append(reader);
+        sb.append(" finished reading");
+
+        writeToLoggerInfo(sb.toString());
+
         readerAndWriterSemaphore.release();
         readersCount--;
 
@@ -156,10 +171,27 @@ public class Library {
     }
 
     public void finishWrite(Writer writer) {
-        logger.info(writer.toString() + " finished writing");
+        StringBuilder sb = new StringBuilder();
+        sb.append(writer);
+        sb.append(" finished writing");
+
+        writeToLoggerInfo(sb.toString());
+
         readerAndWriterSemaphore.release(maxReaders);
         writersCount--;
 
         librarySemaphore.release();
+    }
+
+    public void writeToLoggerInfo(String message) {
+        if (logger != null && logger.isLoggable(java.util.logging.Level.INFO)) {
+            logger.info(message);
+        }
+    }
+
+    public void writeToLoggerSevere(String message) {
+        if (logger != null && logger.isLoggable(java.util.logging.Level.SEVERE)) {
+            logger.severe(message);
+        }
     }
 }

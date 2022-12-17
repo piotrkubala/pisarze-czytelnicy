@@ -11,37 +11,27 @@ public class Writer extends Human {
 <span class="nc bnc" id="L11" title="All 2 branches missed.">        while (!shouldStop) {</span>
 <span class="nc" id="L12">            long timeToWait = (long) (1000 * (Math.random() * (maxTimeToWait - minTimeToWait) + minTimeToWait));</span>
 
-            try {
-<span class="nc" id="L15">                Thread.sleep(timeToWait);</span>
-<span class="nc" id="L16">            } catch (InterruptedException e) {</span>
-<span class="nc" id="L17">                e.printStackTrace();</span>
-<span class="nc" id="L18">            }</span>
+<span class="nc" id="L14">            sleepForTime(timeToWait);</span>
 
-<span class="nc bnc" id="L20" title="All 2 branches missed.">            if (shouldStop) {</span>
-<span class="nc" id="L21">                break;</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">            if (!shouldStop) {</span>
+<span class="nc" id="L17">                library.requestWrite(this);</span>
+
+<span class="nc bnc" id="L19" title="All 2 branches missed.">                if (shouldStop) {</span>
+<span class="nc" id="L20">                    break;</span>
+                }
+
+<span class="nc" id="L23">                long timeToBeInLibrary = (long) (1000 * (Math.random() * (maxTimeToBeInLibrary - minTimeToBeInLibrary) + minTimeToBeInLibrary));</span>
+
+<span class="nc" id="L25">                sleepForTime(timeToBeInLibrary);</span>
+
+<span class="nc" id="L27">                library.finishWrite(this);</span>
             }
-
-<span class="nc" id="L24">            library.requestWrite(this);</span>
-
-<span class="nc bnc" id="L26" title="All 2 branches missed.">            if (shouldStop) {</span>
-<span class="nc" id="L27">                break;</span>
-            }
-
-<span class="nc" id="L30">            long timeToBeInLibrary = (long) (1000 * (Math.random() * (maxTimeToBeInLibrary - minTimeToBeInLibrary) + minTimeToBeInLibrary));</span>
-
-            try {
-<span class="nc" id="L33">                Thread.sleep(timeToBeInLibrary);</span>
-<span class="nc" id="L34">            } catch (InterruptedException e) {</span>
-<span class="nc" id="L35">                e.printStackTrace();</span>
-<span class="nc" id="L36">            }</span>
-
-<span class="nc" id="L38">            library.finishWrite(this);</span>
-<span class="nc" id="L39">        }</span>
-<span class="nc" id="L40">    }</span>
+<span class="nc" id="L29">        }</span>
+<span class="nc" id="L30">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L44">        return &quot;Writer &quot; + id;</span>
+<span class="nc" id="L34">        return &quot;Writer &quot; + id;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -2,7 +2,7 @@
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -12,7 +12,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class Library {
-<span class="nc" id="L15">    Logger logger = Logger.getLogger(Library.class.getName());</span>
+<span class="nc" id="L15">    final Logger logger = Logger.getLogger(Library.class.getName());</span>
 
     /**
      * Formatter for the logger.
@@ -27,7 +27,7 @@ public class Library {
 <span class="nc" id="L27">                Throwable t = r.getThrown();</span>
 <span class="nc" id="L28">                try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {</span>
 <span class="nc" id="L29">                    t.printStackTrace(pw);</span>
-<span class="nc" id="L30">                    sb.append(sw.toString());</span>
+<span class="nc" id="L30">                    sb.append(sw);</span>
 <span class="nc" id="L31">                } catch (Exception ex) {</span>
                     // ignore all exceptions here
 <span class="nc" id="L33">                }</span>
@@ -48,119 +48,151 @@ public class Library {
 
 <span class="nc" id="L49">    BlockingQueue&lt;Human&gt; waitingQueue = new LinkedBlockingQueue&lt;&gt;();</span>
 
-<span class="nc" id="L51">    Vector&lt;Human&gt; humans = new Vector&lt;&gt;();</span>
+<span class="nc" id="L51">    ArrayList&lt;Human&gt; humans = new ArrayList&lt;&gt;();</span>
 
-<span class="nc" id="L53">    public Library() {</span>
-<span class="nc" id="L54">        maxReaders = 5;</span>
+<span class="nc" id="L53">    public Library(int maxReadersArg) {</span>
+<span class="nc" id="L54">        maxReaders = maxReadersArg;</span>
 
 <span class="nc" id="L56">        createSemaphoreAndConfigureLogger();</span>
 <span class="nc" id="L57">    }</span>
 
-<span class="nc" id="L59">    public Library(int maxReadersArg) {</span>
-<span class="nc" id="L60">        maxReaders = maxReadersArg;</span>
-
-<span class="nc" id="L62">        createSemaphoreAndConfigureLogger();</span>
-<span class="nc" id="L63">    }</span>
-
     void createSemaphoreAndConfigureLogger() {
-<span class="nc" id="L66">        readerAndWriterSemaphore = new Semaphore(maxReaders);</span>
+<span class="nc" id="L60">        readerAndWriterSemaphore = new Semaphore(maxReaders);</span>
 
-<span class="nc" id="L68">        logger.setUseParentHandlers(false);</span>
-<span class="nc" id="L69">        ConsoleHandler consoleHandler = new ConsoleHandler();</span>
-<span class="nc" id="L70">        consoleHandler.setFormatter(new CustomRecordFormatter());</span>
-<span class="nc" id="L71">        logger.addHandler(consoleHandler);</span>
-<span class="nc" id="L72">    }</span>
+<span class="nc" id="L62">        logger.setUseParentHandlers(false);</span>
+<span class="nc" id="L63">        ConsoleHandler consoleHandler = new ConsoleHandler();</span>
+<span class="nc" id="L64">        consoleHandler.setFormatter(new CustomRecordFormatter());</span>
+<span class="nc" id="L65">        logger.addHandler(consoleHandler);</span>
+<span class="nc" id="L66">    }</span>
 
     public void addHuman(Human human) {
-<span class="nc" id="L75">        humans.add(human);</span>
-<span class="nc" id="L76">    }</span>
+<span class="nc" id="L69">        humans.add(human);</span>
+<span class="nc" id="L70">    }</span>
 
     void printQueueInfo() {
-<span class="nc" id="L79">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L73">        StringBuilder sb = new StringBuilder();</span>
 
-<span class="nc" id="L81">        sb.append(&quot;------ Queue info ------&quot;);</span>
-<span class="nc" id="L82">        sb.append(&quot;\nWaiting queue size: &quot;);</span>
-<span class="nc" id="L83">        sb.append(waitingQueue.size());</span>
-<span class="nc" id="L84">        sb.append(&quot;\nReaders count: &quot;);</span>
-<span class="nc" id="L85">        sb.append(readersCount);</span>
-<span class="nc" id="L86">        sb.append(&quot;\nWriters count: &quot;);</span>
-<span class="nc" id="L87">        sb.append(writersCount);</span>
-<span class="nc" id="L88">        sb.append(&quot;\n------ Queue info end ------&quot;);</span>
+<span class="nc" id="L75">        sb.append(&quot;------ Queue info ------&quot;);</span>
+<span class="nc" id="L76">        sb.append(&quot;\nWaiting queue size: &quot;);</span>
+<span class="nc" id="L77">        sb.append(waitingQueue.size());</span>
+<span class="nc" id="L78">        sb.append(&quot;\nReaders count: &quot;);</span>
+<span class="nc" id="L79">        sb.append(readersCount);</span>
+<span class="nc" id="L80">        sb.append(&quot;\nWriters count: &quot;);</span>
+<span class="nc" id="L81">        sb.append(writersCount);</span>
+<span class="nc" id="L82">        sb.append(&quot;\n------ Queue info end ------&quot;);</span>
 
-<span class="nc" id="L90">        logger.info(sb.toString());</span>
-<span class="nc" id="L91">    }</span>
+<span class="nc" id="L84">        writeToLoggerInfo(sb.toString());</span>
+<span class="nc" id="L85">    }</span>
 
     public void processWaitingQueue() {
-<span class="nc bnc" id="L94" title="All 2 branches missed.">        while (!shouldEnd) {</span>
-<span class="nc" id="L95">            librarySemaphore.acquireUninterruptibly();</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        while (!shouldEnd) {</span>
+<span class="nc" id="L89">            librarySemaphore.acquireUninterruptibly();</span>
 
-<span class="nc bnc" id="L97" title="All 2 branches missed.">            while (!waitingQueue.isEmpty()) {</span>
-<span class="nc" id="L98">                printQueueInfo();</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">            while (!waitingQueue.isEmpty()) {</span>
+<span class="nc" id="L92">                printQueueInfo();</span>
 
-<span class="nc" id="L100">                Human human = waitingQueue.poll();</span>
+<span class="nc" id="L94">                Human human = waitingQueue.poll();</span>
 
-<span class="nc bnc" id="L102" title="All 2 branches missed.">                if (human == null) {</span>
-<span class="nc" id="L103">                    continue;</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                if (human == null) {</span>
+<span class="nc" id="L97">                    continue;</span>
                 }
 
-<span class="nc bnc" id="L106" title="All 2 branches missed.">                if (human.type == Human.HumanType.READER) {</span>
-<span class="nc" id="L107">                    readerAndWriterSemaphore.acquireUninterruptibly();</span>
-<span class="nc" id="L108">                    logger.info(human.toString() + &quot; is reading&quot;);</span>
-<span class="nc" id="L109">                    readersCount++;</span>
-                } else {
-<span class="nc" id="L111">                    readerAndWriterSemaphore.acquireUninterruptibly(maxReaders);</span>
-<span class="nc" id="L112">                    logger.info(human.toString() + &quot; is writing&quot;);</span>
-<span class="nc" id="L113">                    writersCount++;</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">                if (human.type == Human.HumanType.READER) {</span>
+<span class="nc" id="L101">                    readerAndWriterSemaphore.acquireUninterruptibly();</span>
+<span class="nc" id="L102">                    StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L103">                    sb.append(human);</span>
+<span class="nc" id="L104">                    sb.append(&quot; is reading&quot;);</span>
+
+<span class="nc" id="L106">                    writeToLoggerInfo(sb.toString());</span>
+<span class="nc" id="L107">                    readersCount++;</span>
+<span class="nc" id="L108">                } else {</span>
+<span class="nc" id="L109">                    readerAndWriterSemaphore.acquireUninterruptibly(maxReaders);</span>
+<span class="nc" id="L110">                    StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L111">                    sb.append(human);</span>
+<span class="nc" id="L112">                    sb.append(&quot; is writing&quot;);</span>
+
+<span class="nc" id="L114">                    writeToLoggerInfo(sb.toString());</span>
+<span class="nc" id="L115">                    writersCount++;</span>
                 }
-<span class="nc" id="L115">                human.humanSemaphore.release();</span>
-<span class="nc" id="L116">            }</span>
+<span class="nc" id="L117">                human.humanSemaphore.release();</span>
+<span class="nc" id="L118">            }</span>
         }
-<span class="nc" id="L118">    }</span>
+<span class="nc" id="L120">    }</span>
 
     public void stopLibrary() {
-<span class="nc" id="L121">        logger.info(&quot;Stopping library&quot;);</span>
+<span class="nc" id="L123">        writeToLoggerInfo(&quot;Stopping library&quot;);</span>
 
-<span class="nc bnc" id="L123" title="All 2 branches missed.">        for (Human human : humans) {</span>
-<span class="nc" id="L124">            human.stopHuman();</span>
-<span class="nc" id="L125">        }</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        for (Human human : humans) {</span>
+<span class="nc" id="L126">            human.stopHuman();</span>
+<span class="nc" id="L127">        }</span>
 
-<span class="nc" id="L127">        shouldEnd = true;</span>
-<span class="nc" id="L128">        waitingQueue.clear();</span>
-<span class="nc" id="L129">        librarySemaphore.release(humans.size());</span>
+<span class="nc" id="L129">        shouldEnd = true;</span>
+<span class="nc" id="L130">        waitingQueue.clear();</span>
+<span class="nc" id="L131">        librarySemaphore.release(humans.size());</span>
 
-<span class="nc" id="L131">        logger.info(&quot;Library stopped&quot;);</span>
-<span class="nc" id="L132">    }</span>
+<span class="nc" id="L133">        writeToLoggerInfo(&quot;Library stopped&quot;);</span>
+<span class="nc" id="L134">    }</span>
 
     public void requestRead(Reader reader) {
-<span class="nc" id="L135">        logger.info(reader.toString() + &quot; requested read&quot;);</span>
-<span class="nc" id="L136">        waitingQueue.add(reader);</span>
+<span class="nc" id="L137">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L138">        sb.append(reader);</span>
+<span class="nc" id="L139">        sb.append(&quot; wants to read&quot;);</span>
 
-<span class="nc" id="L138">        librarySemaphore.release();</span>
-<span class="nc" id="L139">        reader.humanSemaphore.acquireUninterruptibly();</span>
-<span class="nc" id="L140">    }</span>
+<span class="nc" id="L141">        writeToLoggerInfo(sb.toString());</span>
+<span class="nc" id="L142">        waitingQueue.add(reader);</span>
+
+<span class="nc" id="L144">        librarySemaphore.release();</span>
+<span class="nc" id="L145">        reader.humanSemaphore.acquireUninterruptibly();</span>
+<span class="nc" id="L146">    }</span>
 
     public void requestWrite(Writer writer) {
-<span class="nc" id="L143">        logger.info(writer.toString() + &quot; requested write&quot;);</span>
-<span class="nc" id="L144">        waitingQueue.add(writer);</span>
+<span class="nc" id="L149">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L150">        sb.append(writer);</span>
+<span class="nc" id="L151">        sb.append(&quot; wants to write&quot;);</span>
 
-<span class="nc" id="L146">        librarySemaphore.release();</span>
-<span class="nc" id="L147">        writer.humanSemaphore.acquireUninterruptibly();</span>
-<span class="nc" id="L148">    }</span>
+<span class="nc" id="L153">        writeToLoggerInfo(sb.toString());</span>
+<span class="nc" id="L154">        waitingQueue.add(writer);</span>
+
+<span class="nc" id="L156">        librarySemaphore.release();</span>
+<span class="nc" id="L157">        writer.humanSemaphore.acquireUninterruptibly();</span>
+<span class="nc" id="L158">    }</span>
 
     public void finishRead(Reader reader) {
-<span class="nc" id="L151">        logger.info(reader.toString() + &quot; finished reading&quot;);</span>
-<span class="nc" id="L152">        readerAndWriterSemaphore.release();</span>
-<span class="nc" id="L153">        readersCount--;</span>
+<span class="nc" id="L161">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L162">        sb.append(reader);</span>
+<span class="nc" id="L163">        sb.append(&quot; finished reading&quot;);</span>
 
-<span class="nc" id="L155">        librarySemaphore.release();</span>
-<span class="nc" id="L156">    }</span>
+<span class="nc" id="L165">        writeToLoggerInfo(sb.toString());</span>
+
+<span class="nc" id="L167">        readerAndWriterSemaphore.release();</span>
+<span class="nc" id="L168">        readersCount--;</span>
+
+<span class="nc" id="L170">        librarySemaphore.release();</span>
+<span class="nc" id="L171">    }</span>
 
     public void finishWrite(Writer writer) {
-<span class="nc" id="L159">        logger.info(writer.toString() + &quot; finished writing&quot;);</span>
-<span class="nc" id="L160">        readerAndWriterSemaphore.release(maxReaders);</span>
-<span class="nc" id="L161">        writersCount--;</span>
+<span class="nc" id="L174">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L175">        sb.append(writer);</span>
+<span class="nc" id="L176">        sb.append(&quot; finished writing&quot;);</span>
 
-<span class="nc" id="L163">        librarySemaphore.release();</span>
-<span class="nc" id="L164">    }</span>
+<span class="nc" id="L178">        writeToLoggerInfo(sb.toString());</span>
+
+<span class="nc" id="L180">        readerAndWriterSemaphore.release(maxReaders);</span>
+<span class="nc" id="L181">        writersCount--;</span>
+
+<span class="nc" id="L183">        librarySemaphore.release();</span>
+<span class="nc" id="L184">    }</span>
+
+    public void writeToLoggerInfo(String message) {
+<span class="nc bnc" id="L187" title="All 4 branches missed.">        if (logger != null &amp;&amp; logger.isLoggable(java.util.logging.Level.INFO)) {</span>
+<span class="nc" id="L188">            logger.info(message);</span>
+        }
+<span class="nc" id="L190">    }</span>
+
+    public void writeToLoggerSevere(String message) {
+<span class="nc bnc" id="L193" title="All 4 branches missed.">        if (logger != null &amp;&amp; logger.isLoggable(java.util.logging.Level.SEVERE)) {</span>
+<span class="nc" id="L194">            logger.severe(message);</span>
+        }
+<span class="nc" id="L196">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

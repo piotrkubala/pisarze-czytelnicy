@@ -1,8 +1,5 @@
 package pl.edu.agh.kis.pz1;
 
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
 public class Reader extends Human {
     public Reader(Library libraryArg, float minTimeToWaitArg, float maxTimeToWaitArg, float minTimeToBeInLibraryArg, float maxTimeToBeInLibraryArg, int idArg) {
         super(libraryArg, minTimeToWaitArg, maxTimeToWaitArg, minTimeToBeInLibraryArg, maxTimeToBeInLibraryArg, idArg);
@@ -14,31 +11,21 @@ public class Reader extends Human {
         while (!shouldStop) {
             long timeToWait = (long) (1000 * (Math.random() * (maxTimeToWait - minTimeToWait) + minTimeToWait));
 
-            try {
-                Thread.sleep(timeToWait);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            sleepForTime(timeToWait);
+
+            if (!shouldStop) {
+                library.requestRead(this);
+
+                if (shouldStop) {
+                    break;
+                }
+
+                long timeToBeInLibrary = (long) (1000 * (Math.random() * (maxTimeToBeInLibrary - minTimeToBeInLibrary) + minTimeToBeInLibrary));
+
+                sleepForTime(timeToBeInLibrary);
+
+                library.finishRead(this);
             }
-
-            if (shouldStop) {
-                break;
-            }
-
-            library.requestRead(this);
-
-            if (shouldStop) {
-                break;
-            }
-
-            long timeToBeInLibrary = (long) (1000 * (Math.random() * (maxTimeToBeInLibrary - minTimeToBeInLibrary) + minTimeToBeInLibrary));
-
-            try {
-                Thread.sleep(timeToBeInLibrary);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            library.finishRead(this);
         }
     }
 
