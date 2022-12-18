@@ -1,17 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+<testng-results ignored="0" total="5" passed="5" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2022-12-17T22:20:11 CET" name="Surefire suite" finished-at="2022-12-17T22:20:12 CET" duration-ms="140">
+  <suite started-at="2022-12-18T15:27:59 CET" name="Surefire suite" finished-at="2022-12-18T15:28:00 CET" duration-ms="788">
     <groups>
     </groups>
-    <test started-at="2022-12-17T22:20:11 CET" name="Surefire test" finished-at="2022-12-17T22:20:12 CET" duration-ms="140">
+    <test started-at="2022-12-18T15:27:59 CET" name="Surefire test" finished-at="2022-12-18T15:28:00 CET" duration-ms="788">
       <class name="pl.edu.agh.kis.pz1.MainTest">
-        <test-method signature="testMain()[pri:0, instance:pl.edu.agh.kis.pz1.MainTest@784abd3e]" started-at="2022-12-17T22:20:12 CET" name="testMain" finished-at="2022-12-17T22:20:12 CET" duration-ms="36" status="PASS">
+        <test-method signature="testLibrarySimulation()[pri:0, instance:pl.edu.agh.kis.pz1.MainTest@44f24a20]" started-at="2022-12-18T15:27:59 CET" name="testLibrarySimulation" finished-at="2022-12-18T15:28:00 CET" duration-ms="634" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLibrarySimulation -->
+        <test-method signature="testMain()[pri:0, instance:pl.edu.agh.kis.pz1.MainTest@44f24a20]" started-at="2022-12-18T15:28:00 CET" name="testMain" finished-at="2022-12-18T15:28:00 CET" duration-ms="1" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- testMain -->
       </class> <!-- pl.edu.agh.kis.pz1.MainTest -->
+      <class name="pl.edu.agh.kis.pz1.ReaderTest">
+        <test-method signature="testReaderCreation()[pri:0, instance:pl.edu.agh.kis.pz1.ReaderTest@1859e2a4]" started-at="2022-12-18T15:28:00 CET" name="testReaderCreation" finished-at="2022-12-18T15:28:00 CET" duration-ms="0" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReaderCreation -->
+      </class> <!-- pl.edu.agh.kis.pz1.ReaderTest -->
+      <class name="pl.edu.agh.kis.pz1.WriterTest">
+        <test-method signature="testWriterCreation()[pri:0, instance:pl.edu.agh.kis.pz1.WriterTest@46349b95]" started-at="2022-12-18T15:28:00 CET" name="testWriterCreation" finished-at="2022-12-18T15:28:00 CET" duration-ms="0" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testWriterCreation -->
+      </class> <!-- pl.edu.agh.kis.pz1.WriterTest -->
+      <class name="pl.edu.agh.kis.pz1.LibraryTest">
+        <test-method signature="testLibraryCreation()[pri:0, instance:pl.edu.agh.kis.pz1.LibraryTest@7d44a19]" started-at="2022-12-18T15:27:59 CET" name="testLibraryCreation" finished-at="2022-12-18T15:27:59 CET" duration-ms="40" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLibraryCreation -->
+      </class> <!-- pl.edu.agh.kis.pz1.LibraryTest -->
     </test> <!-- Surefire test -->
   </suite> <!-- Surefire suite -->
 </testng-results>

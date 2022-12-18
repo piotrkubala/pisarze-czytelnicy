@@ -5,47 +5,72 @@ import sun.misc.Signal;
 import java.util.logging.Logger;
 
 /**
- * Schemat @author Paweł Skrzyński
+ * Główna klasa programu symulującego rozwiązanie problemu pisarzy i czytelników.
+ * Schemat klas @author Paweł Skrzyński
  * Algorytm @author Piotr Kubala
  */
-<span class="fc" id="L11">public class Main {</span>
-<span class="fc" id="L12">    static Logger logger = Logger.getLogger(Main.class.getName());</span>
+<span class="fc" id="L12">public class Main {</span>
+    /**
+     * Logger głównego programu.
+     */
+<span class="fc" id="L16">    static Logger logger = Logger.getLogger(Main.class.getName());</span>
 
+    /**
+     * Główna metoda programu.
+     * @param args Argumenty wywołania programu.
+     */
     public static void main(String[] args) {
-<span class="nc bnc" id="L15" title="All 2 branches missed.">        if (args.length != 2) {</span>
-<span class="nc" id="L16">            logger.info(&quot;Wrong number of arguments&quot;);</span>
-<span class="nc" id="L17">            return;</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">        if (args.length != 2) {</span>
+<span class="nc" id="L24">            logger.info(&quot;Wrong number of arguments&quot;);</span>
+<span class="nc" id="L25">            return;</span>
         }
 
         try {
-<span class="nc" id="L21">            int readersCount = Integer.parseInt(args[0]);</span>
-<span class="nc" id="L22">            int writersCount = Integer.parseInt(args[1]);</span>
+<span class="nc" id="L29">            int readersCount = Integer.parseInt(args[0]);</span>
+<span class="nc" id="L30">            int writersCount = Integer.parseInt(args[1]);</span>
 
-<span class="nc bnc" id="L24" title="All 4 branches missed.">            if (readersCount &lt; 0 || writersCount &lt; 0) {</span>
-<span class="nc" id="L25">                logger.info(&quot;Wrong arguments&quot;);</span>
-<span class="nc" id="L26">                return;</span>
+<span class="nc bnc" id="L32" title="All 4 branches missed.">            if (readersCount &lt; 0 || writersCount &lt; 0) {</span>
+<span class="nc" id="L33">                logger.info(&quot;Wrong arguments&quot;);</span>
+<span class="nc" id="L34">                return;</span>
             }
 
-<span class="nc" id="L29">            Library library = new Library(5);</span>
+<span class="nc" id="L37">            simulateLibrary(readersCount, writersCount, new float[] {1.0f, 2.0f, 3.0f, 5.0f}, new float[] {3.0f, 6.0f, 5.0f, 9.0f}, false);</span>
+<span class="nc" id="L38">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L39">            logger.info(&quot;Wrong arguments&quot;);</span>
+<span class="nc" id="L40">        }</span>
+<span class="nc" id="L41">    }</span>
 
-<span class="nc" id="L31">            Signal.handle(new Signal(&quot;INT&quot;), signal -&gt; library.stopLibrary());</span>
+    /**
+     * Symuluje działanie biblioteki.
+     * @param readersCount ilość czytelników
+     * @param writersCount ilość pisarzy
+     * @param timeLimitsForReader {minTimeToWaitR, maxTimeToWaitR, minTimeToBeInLibraryR, maxTimeToBeInLibraryR}
+     * @param timeLimitsForWriter {minTimeToWaitW, maxTimeToWaitW, minTimeToBeInLibraryW, maxTimeToBeInLibraryW}
+     * @param debugMode czy włączyć tryb debugowania
+     * @return string zawierający informacje o tym, co się dzieje w bibliotece (jeśli tryb debugowania jest włączony, w przeciwnym wypadku zwraca pusty string)
+     */
+    public static String simulateLibrary(int readersCount, int writersCount,
+                                         float[] timeLimitsForReader, float[] timeLimitsForWriter,
+                                         boolean debugMode) {
+<span class="fc" id="L55">        Library library = new Library(5, debugMode);</span>
 
-<span class="nc bnc" id="L33" title="All 2 branches missed.">            for (int i = 0; i &lt; readersCount; i++) {</span>
-<span class="nc" id="L34">                Reader reader = new Reader(library, 1, 2, 1, 3, i);</span>
-<span class="nc" id="L35">                library.addHuman(reader);</span>
-<span class="nc" id="L36">                reader.start();</span>
-            }
+<span class="pc" id="L57">        Signal.handle(new Signal(&quot;INT&quot;), signal -&gt; library.stopLibrary());</span>
 
-<span class="nc bnc" id="L39" title="All 2 branches missed.">            for (int i = 0; i &lt; writersCount; i++) {</span>
-<span class="nc" id="L40">                Writer writer = new Writer(library, 1, 2, 4, 6, i);</span>
-<span class="nc" id="L41">                library.addHuman(writer);</span>
-<span class="nc" id="L42">                writer.start();</span>
-            }
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        for (int i = 0; i &lt; readersCount; i++) {</span>
+<span class="fc" id="L60">            Reader reader = new Reader(library, timeLimitsForReader[0], timeLimitsForReader[1], timeLimitsForReader[2], timeLimitsForReader[3], i);</span>
+<span class="fc" id="L61">            library.addHuman(reader);</span>
+<span class="fc" id="L62">            reader.start();</span>
+        }
 
-<span class="nc" id="L45">            library.processWaitingQueue();</span>
-<span class="nc" id="L46">        } catch (NumberFormatException e) {</span>
-<span class="nc" id="L47">            logger.info(&quot;Wrong arguments&quot;);</span>
-<span class="nc" id="L48">        }</span>
-<span class="nc" id="L49">    }</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (int i = 0; i &lt; writersCount; i++) {</span>
+<span class="fc" id="L66">            Writer writer = new Writer(library, timeLimitsForWriter[0], timeLimitsForWriter[1], timeLimitsForWriter[2], timeLimitsForWriter[3], i);</span>
+<span class="fc" id="L67">            library.addHuman(writer);</span>
+<span class="fc" id="L68">            writer.start();</span>
+        }
+
+<span class="fc" id="L71">        library.processWaitingQueue();</span>
+
+<span class="fc" id="L73">        return library.getDebugString();</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

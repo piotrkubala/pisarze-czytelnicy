@@ -3,72 +3,138 @@
 import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
+/**
+ * Klasa abstarkcyjna reprezentująca człowieka (pisarza lub czytelnika).
+ */
 public abstract class Human extends Thread {
-<span class="nc" id="L7">    protected Logger logger = Logger.getLogger(Human.class.getName());</span>
+    /**
+     * Logger czytelnika lub pisarza.
+     */
+<span class="fc" id="L13">    protected Logger logger = Logger.getLogger(Human.class.getName());</span>
 
-<span class="nc" id="L9">    public final Semaphore humanSemaphore = new Semaphore(0);</span>
+    /**
+     * Semafor umożliwiający blokowanie czytelnika lub pisarza.
+     */
+<span class="fc" id="L18">    public final Semaphore humanSemaphore = new Semaphore(0);</span>
 
-    // time in seconds
+    /**
+     * Wyrażony w sekundach minimalny czas jaki czytelnik lub pisarz spędzi przed powrotem do biblioteki.
+     */
     protected float minTimeToWait;
+    /**
+     * Wyrażony w sekundach maksymalny czas jaki czytelnik lub pisarz spędzi przed powrotem do biblioteki.
+     */
     protected float maxTimeToWait;
 
+    /**
+     * Wyrażony w sekundach minimalny czas jaki czytelnik lub pisarz spędzi w bibliotece.
+     */
     protected float minTimeToBeInLibrary;
+    /**
+     * Wyrażony w sekundach maksymalny czas jaki czytelnik lub pisarz spędzi w bibliotece.
+     */
     protected float maxTimeToBeInLibrary;
+    /**
+     * Biblioteka, do której należy czytelnik lub pisarz.
+     */
     protected Library library;
 
-<span class="nc" id="L19">    protected boolean shouldStop = false;</span>
+    /**
+     * Określa czy czytelnik lub pisarz powinien zakończyć działanie.
+     */
+<span class="fc" id="L45">    protected boolean shouldStop = false;</span>
 
+    /**
+     * Id czytelnika lub pisarza.
+     */
     protected int id;
 
-<span class="nc" id="L23">    public enum HumanType {</span>
-<span class="nc" id="L24">        READER,</span>
-<span class="nc" id="L25">        WRITER</span>
+    /**
+     * Definicja typu czytelnika lub pisarza.
+     */
+<span class="fc" id="L55">    public enum HumanType {</span>
+<span class="fc" id="L56">        READER,</span>
+<span class="fc" id="L57">        WRITER</span>
     }
 
+    /**
+     * Typ czytelnika lub pisarza.
+     */
     protected HumanType type;
 
-<span class="nc" id="L30">    protected Human(Library libraryArg, float minTimeToWaitArg, float maxTimeToWaitArg, float minTimeToBeInLibraryArg, float maxTimeToBeInLibraryArg, int idArg) {</span>
-<span class="nc" id="L31">        library = libraryArg;</span>
-<span class="nc" id="L32">        minTimeToWait = minTimeToWaitArg;</span>
-<span class="nc" id="L33">        maxTimeToWait = maxTimeToWaitArg;</span>
-<span class="nc" id="L34">        minTimeToBeInLibrary = minTimeToBeInLibraryArg;</span>
-<span class="nc" id="L35">        maxTimeToBeInLibrary = maxTimeToBeInLibraryArg;</span>
-<span class="nc" id="L36">        id = idArg;</span>
-<span class="nc" id="L37">    }</span>
+    /**
+     * Konstruktor czytelnika lub pisarza.
+     * @param libraryArg biblioteka, do której należy czytelnik lub pisarz
+     * @param minTimeToWaitArg minimalny czas jaki czytelnik lub pisarz spędzi przed powrotem do biblioteki
+     * @param maxTimeToWaitArg maksymalny czas jaki czytelnik lub pisarz spędzi przed powrotem do biblioteki
+     * @param minTimeToBeInLibraryArg minimalny czas jaki czytelnik lub pisarz spędzi w bibliotece
+     * @param maxTimeToBeInLibraryArg maksymalny czas jaki czytelnik lub pisarz spędzi w bibliotece
+     * @param idArg id czytelnika lub pisarza
+     */
+<span class="fc" id="L74">    protected Human(Library libraryArg, float minTimeToWaitArg, float maxTimeToWaitArg, float minTimeToBeInLibraryArg, float maxTimeToBeInLibraryArg, int idArg) {</span>
+<span class="fc" id="L75">        library = libraryArg;</span>
+<span class="fc" id="L76">        minTimeToWait = minTimeToWaitArg;</span>
+<span class="fc" id="L77">        maxTimeToWait = maxTimeToWaitArg;</span>
+<span class="fc" id="L78">        minTimeToBeInLibrary = minTimeToBeInLibraryArg;</span>
+<span class="fc" id="L79">        maxTimeToBeInLibrary = maxTimeToBeInLibraryArg;</span>
+<span class="fc" id="L80">        id = idArg;</span>
+<span class="fc" id="L81">    }</span>
 
+    /**
+     * Metoda informująca czytelnika lub pisarza, że powinien wyjść z biblioteki i zakończyć działanie.
+     */
     public void stopHuman() {
-<span class="nc" id="L40">        shouldStop = true;</span>
-<span class="nc" id="L41">        humanSemaphore.release();</span>
-<span class="nc" id="L42">    }</span>
+<span class="fc" id="L87">        shouldStop = true;</span>
+<span class="fc" id="L88">        humanSemaphore.release();</span>
+<span class="fc" id="L89">    }</span>
 
+    /**
+     * Metoda wypisujące wiadomość do loggera jako info.
+     * @param message wiadomość do wypisania
+     */
     public void writeToLoggerInfo(String message) {
-<span class="nc bnc" id="L45" title="All 4 branches missed.">        if (logger != null &amp;&amp; logger.isLoggable(java.util.logging.Level.INFO)) {</span>
-<span class="nc" id="L46">            logger.info(message);</span>
+<span class="nc bnc" id="L96" title="All 4 branches missed.">        if (logger != null &amp;&amp; logger.isLoggable(java.util.logging.Level.INFO)) {</span>
+<span class="nc" id="L97">            logger.info(message);</span>
         }
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L99">    }</span>
 
+    /**
+     * Metoda wypisujące wiadomość do loggera jako severe.
+     * @param message wiadomość do wypisania
+     */
     public void writeToLoggerSevere(String message) {
-<span class="nc bnc" id="L51" title="All 4 branches missed.">        if (logger != null &amp;&amp; logger.isLoggable(java.util.logging.Level.SEVERE)) {</span>
-<span class="nc" id="L52">            logger.severe(message);</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">        if (logger != null &amp;&amp; logger.isLoggable(java.util.logging.Level.SEVERE)) {</span>
+<span class="nc" id="L107">            logger.severe(message);</span>
         }
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L109">    }</span>
 
+    /**
+     * Metoda czekająca określoną ilość czasu wyrażony w milisekundach.
+     * @param time
+     */
     public void sleepForTime(long time) {
         try {
-<span class="nc" id="L58">            Thread.sleep(time);</span>
-<span class="nc" id="L59">        } catch (InterruptedException ie) {</span>
-<span class="nc" id="L60">            StringBuilder sb = new StringBuilder();</span>
-<span class="nc" id="L61">            sb.append(&quot;InterruptedException: &quot;);</span>
-<span class="nc" id="L62">            sb.append(ie);</span>
+<span class="fc" id="L117">            Thread.sleep(time);</span>
+<span class="nc" id="L118">        } catch (InterruptedException ie) {</span>
+<span class="nc" id="L119">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L120">            sb.append(&quot;InterruptedException: &quot;);</span>
+<span class="nc" id="L121">            sb.append(ie);</span>
 
-<span class="nc" id="L64">            writeToLoggerSevere(sb.toString());</span>
-<span class="nc" id="L65">            Thread.currentThread().interrupt();</span>
-<span class="nc" id="L66">        }</span>
-<span class="nc" id="L67">    }</span>
+<span class="nc" id="L123">            writeToLoggerSevere(sb.toString());</span>
+<span class="nc" id="L124">            Thread.currentThread().interrupt();</span>
+<span class="fc" id="L125">        }</span>
+<span class="fc" id="L126">    }</span>
 
+    /**
+     * Metoda abstrakcyjna wypisująca informacje o czytelniku lub pisarzu.
+     * @return informacje o czytelniku lub pisarzu
+     */
     @Override
     public abstract String toString();
 
+    /**
+     * Metoda obstrakcyjna reprezentująca działanie czytelnika lub pisarza.
+     */
     @Override
     public abstract void run();
 }
