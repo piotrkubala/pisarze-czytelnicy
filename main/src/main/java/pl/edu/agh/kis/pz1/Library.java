@@ -11,11 +11,17 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+/**
+ * Klasa reprezentująca bibliotekę.
+ */
 public class Library {
+    /**
+     * Logger biblioteki.
+     */
     final Logger logger = Logger.getLogger(Library.class.getName());
 
     /**
-     * Formatter for the logger.
+     * Formatter loggera.
      */
     static class CustomRecordFormatter extends Formatter {
         @Override
@@ -36,26 +42,78 @@ public class Library {
         }
     }
 
+    /**
+     * Zmienna przełączająca tryb debugowania.
+     */
+    boolean debugMode = false;
+    /**
+     * Zmienna przechwująca łańcuch znaków w trybie debugowania, który byłby wypisany na konsolę.
+     */
+    StringBuilder debugStringBuilder = new StringBuilder();
+    /**
+     * Maksymalna ilość iteracji w trybie debugowania.
+     */
+    int debugMaxIterations;
+    /**
+     * Semafor synchronizujący dodawanie tekstu do łańcucha znaków w trybie debugowania.
+     */
+    final Semaphore debugSemaphore = new Semaphore(1);
+
+    /**
+     * Zmienna określająca czy biblioteka powinna zakończyć działanie.
+     */
     boolean shouldEnd = false;
 
+    /**
+     * Maksymalna ilość miejsc w bibliotece dla czytelników.
+     */
     int maxReaders;
 
+    /**
+     * Obecna ilość pisarzy w bibliotece.
+     */
     int writersCount = 0;
+    /**
+     * Obecna ilość czytelników w bibliotece.
+     */
     int readersCount = 0;
 
+    /**
+     * Semafor dla miejsc w bibliotece.
+     */
     Semaphore readerAndWriterSemaphore;
+    /**
+     * Semafor dla bibliotekarza.
+     */
     Semaphore librarySemaphore = new Semaphore(0);
 
+    /**
+     * Kolejka zapisująca kolejność wejścia czytelników i pisarzy do biblioteki.
+     */
     BlockingQueue<Human> waitingQueue = new LinkedBlockingQueue<>();
 
+    /**
+     * Lista zapisanych czytelników i pisarzy w bibliotece.
+     */
     ArrayList<Human> humans = new ArrayList<>();
 
-    public Library(int maxReadersArg) {
+    /**
+     * Konstruktor biblioteki.
+     * @param maxReadersArg Maksymalna ilość miejsc w bibliotece dla czytelników.
+     * @param debugModeArg Zmienna przełączająca tryb debugowania.
+     */
+    public Library(int maxReadersArg, boolean debugModeArg) {
         maxReaders = maxReadersArg;
+
+        debugMode = debugModeArg;
+        debugMaxIterations = 1;
 
         createSemaphoreAndConfigureLogger();
     }
 
+    /**
+     * Metoda tworząca semafor dla miejsc w bibliotece i konfigurująca logger.
+     */
     void createSemaphoreAndConfigureLogger() {
         readerAndWriterSemaphore = new Semaphore(maxReaders);
 
@@ -65,8 +123,46 @@ public class Library {
         logger.addHandler(consoleHandler);
     }
 
+    /**
+     * Metoda dodająca czytelnika lub pisarza do biblioteki.
+     * @param human Czytelnik lub pisarz do dodania.
+     */
     public void addHuman(Human human) {
         humans.add(human);
+
+        debugMaxIterations++;
+    }
+
+    /**
+     * Metoda ustawiająca tryb debugowania.
+     * @param debugModeArg zmienna przełączająca tryb debugowania.
+     */
+    public void setDebugMode(boolean debugModeArg) {
+        debugMode = debugModeArg;
+    }
+
+    /**
+     * Metoda zwracająca, czy tryb debugowania jest włączony.
+     * @return czy tryb debugowania jest włączony.
+     */
+    public boolean getDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMaxIterations(int debugMaxIterationsArg) {
+        debugMaxIterations = debugMaxIterationsArg;
+    }
+
+    public int getDebugMaxIterations() {
+        return debugMaxIterations;
+    }
+
+    public String getDebugString() {
+        return debugStringBuilder.toString();
+    }
+
+    public void resetDebugString() {
+        debugStringBuilder = new StringBuilder();
     }
 
     void printQueueInfo() {
@@ -84,11 +180,38 @@ public class Library {
         writeToLoggerInfo(sb.toString());
     }
 
+    private void processHumanInQueue(Human human) {
+        if (human.type == Human.HumanType.READER) {
+            readerAndWriterSemaphore.acquireUninterruptibly();
+            StringBuilder sb = new StringBuilder();
+            sb.append(human);
+            sb.append(" is reading");
+
+            writeToLoggerInfo(sb.toString());
+            readersCount++;
+        } else {
+            readerAndWriterSemaphore.acquireUninterruptibly(maxReaders);
+            StringBuilder sb = new StringBuilder();
+            sb.append(human);
+            sb.append(" is writing");
+
+            writeToLoggerInfo(sb.toString());
+            writersCount++;
+        }
+        human.humanSemaphore.release();
+    }
+
     public void processWaitingQueue() {
-        while (!shouldEnd) {
+        int debugIterations = 0;
+
+        while (!shouldEnd && (!debugMode || debugIterations < debugMaxIterations)) {
             librarySemaphore.acquireUninterruptibly();
 
-            while (!waitingQueue.isEmpty()) {
+            while (!waitingQueue.isEmpty() && (!debugMode || debugIterations < debugMaxIterations)) {
+                if (debugMode) {
+                    debugIterations++;
+                }
+
                 printQueueInfo();
 
                 Human human = waitingQueue.poll();
@@ -97,25 +220,12 @@ public class Library {
                     continue;
                 }
 
-                if (human.type == Human.HumanType.READER) {
-                    readerAndWriterSemaphore.acquireUninterruptibly();
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(human);
-                    sb.append(" is reading");
-
-                    writeToLoggerInfo(sb.toString());
-                    readersCount++;
-                } else {
-                    readerAndWriterSemaphore.acquireUninterruptibly(maxReaders);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(human);
-                    sb.append(" is writing");
-
-                    writeToLoggerInfo(sb.toString());
-                    writersCount++;
-                }
-                human.humanSemaphore.release();
+                processHumanInQueue(human);
             }
+        }
+
+        if (debugMode) {
+            stopLibrary();
         }
     }
 
@@ -184,13 +294,23 @@ public class Library {
     }
 
     public void writeToLoggerInfo(String message) {
-        if (logger != null && logger.isLoggable(java.util.logging.Level.INFO)) {
+        if (debugMode) {
+            debugSemaphore.acquireUninterruptibly();
+            debugStringBuilder.append(message);
+            debugStringBuilder.append("\n");
+            debugSemaphore.release();
+        } else if (logger != null && logger.isLoggable(java.util.logging.Level.INFO)) {
             logger.info(message);
         }
     }
 
     public void writeToLoggerSevere(String message) {
-        if (logger != null && logger.isLoggable(java.util.logging.Level.SEVERE)) {
+        if (debugMode) {
+            debugSemaphore.acquireUninterruptibly();
+            debugStringBuilder.append(message);
+            debugStringBuilder.append("\n");
+            debugSemaphore.release();
+        } else if (logger != null && logger.isLoggable(java.util.logging.Level.SEVERE)) {
             logger.severe(message);
         }
     }

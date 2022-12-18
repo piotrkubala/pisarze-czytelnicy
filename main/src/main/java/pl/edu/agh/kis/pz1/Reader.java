@@ -1,11 +1,26 @@
 package pl.edu.agh.kis.pz1;
 
+/**
+ * Klasa reprezentująca czytelnika.
+ */
 public class Reader extends Human {
+    /**
+     * Konstruktor czytelnika.
+     * @param libraryArg biblioteka, do której należy czytelnik
+     * @param minTimeToWaitArg minimalny czas jaki czytelnik spędzi przed powrotem do biblioteki
+     * @param maxTimeToWaitArg maksymalny czas jaki czytelnik spędzi przed powrotem do biblioteki
+     * @param minTimeToBeInLibraryArg minimalny czas jaki czytelnik spędzi w bibliotece
+     * @param maxTimeToBeInLibraryArg maksymalny czas jaki czytelnik spędzi w bibliotece
+     * @param idArg id czytelnika
+     */
     public Reader(Library libraryArg, float minTimeToWaitArg, float maxTimeToWaitArg, float minTimeToBeInLibraryArg, float maxTimeToBeInLibraryArg, int idArg) {
         super(libraryArg, minTimeToWaitArg, maxTimeToWaitArg, minTimeToBeInLibraryArg, maxTimeToBeInLibraryArg, idArg);
         type = HumanType.READER;
     }
 
+    /**
+     * Główna metoda wątku czytelnika.
+     */
     @Override
     public void run() {
         while (!shouldStop) {
@@ -29,6 +44,10 @@ public class Reader extends Human {
         }
     }
 
+    /**
+     * Metoda wyświetlająca informacje o czytelniku.
+     * @return string zawierający informacje o czytelniku
+     */
     @Override
     public String toString() {
         return "Reader " + id;
