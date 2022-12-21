@@ -1,46 +1,33 @@
-1. Przykład wygenerowany na bazie archetypu (moduł main):
-   com.github.charlie-cityu.archetypes:docs-city-archetype-quickstart
-   (A variation on the maven-archetype-quickstart with source set to 1.8,
-    build to executable jar with dependencies and junit 4.12. File names have been changed
-    to Main.java and MainTest.java. Directory structure remains consistent with the Maven
-    standard.)
+# Program implementujący rozwiązanie problemu pisarzy i czytelników
+# Autor: Piotr Kubala
 
-2. Przyład buduje plik jar z zależnościami - posiada dodaną zależność (z lab. 3 i lab. 4):
+## Krótki opis problemu
+n pisarzy i k czytelników próbuje otrzymać dostęp do wspólnego zasobu - biblioteki.
+W bibliotece może znajdować się maksymalnie m czytelników jednocześnie.
+Każdy pisarz potrzebuje dostępu do biblioteki na wyłączność, czyli nikt inny nie może przebywać razem z nim w bibliotece.
+Problem polega na takim przydzielaniu dostępu poszczególnym osobom, aby każda zainteresowana mogła po pewnym czasie otrzymać dostęp do biblioteki zgodnie z powyższymi zasadami.
 
-3. Został dodany moduł utils oraz macierzysty plik pom.xml okreslający, że projekt składa się z modułów:
+## Sposób uruchamiania programu
+```bash
+java -jar nazwa_pliku.jar <ilość pisarzy> <ilość czytelników>
+```
 
-  <modules>
-      <module>utils</module>
-      <module>main</module>
-  </modules>
+## Rozwiązanie
+Program implementuje rozwiązanie problemu przy pomocy semaforów i kolejki kolejnych osób.
 
+Każda osoba może być albo czytelnikiem, albo pisarzem.
+W zależności od jej roli może zażądać wyłącznego dostępu do biblioteki (jeżeli jest pisarzem) lub czytać razem z innymi (jeżeli jest czytelnikiem).
 
-  <dependencyManagement>
-      <dependencies>
-          <dependency>
-              <groupId>pl.edu.agh.kis.pz1</groupId>
-              <artifactId>main</artifactId>
-              <version>${project.version}</version>
-          </dependency>
-          <dependency>
-              <groupId>pl.edu.agh.kis.pz1</groupId>
-              <artifactId>utils</artifactId>
-              <version>${project.version}</version>
-          </dependency>
-      </dependencies>
-  </dependencyManagement>
-  
-4. W pom.xml modułów jest odwołanie do pliku macierzystego:
-  <parent>	
-    <groupId>pl.edu.agh.kis.pz1</groupId>
-    <artifactId>multi-module</artifactId>
-    <version>1.0</version>
-  </parent>  
-  
-5. Paczka wykonywalna znajduje sie w module main, który ma dodaną zależność od modułu utils gdyż wykorzystje klasę tam zdefiniowaną - w sekcji <dependencies> dodano:
+Gdy osoba zażąda dostępu do biblioteki, to dodaje się ją do kolejki (wspólnej dla pisarzy i czytelników).
+Wówczas sprawdza się, czy osoba może wejść do biblioteki.
+W momencie, gdy kolejna osoba z kolejki może wejść do biblioteki, to jest ona usuwana z kolejki i dostaje dostęp do biblioteki.
 
-    <dependency>
-        <groupId>pl.edu.agh.kis.pz1</groupId>
-        <artifactId>utils</artifactId>
-        <version>${project.version}</version>
-    </dependency>
+Po pewnym czasie pisarz lub czytelnik może zakończyć pracę w bibliotece, wtedy ponownie sprawdzane jest, czy kolejna osoba z kolejki może wejść do biblioteki.
+
+Użyto semaforów:
+1. po jednym na każdego użytkownika biblioteki
+2. jeden do blokowania bibliotekarza
+3. jeden do blokowania dostępu do biblioteki
+
+## Inne informacje
+Program przechwytuje sygnały SIGINT i SIGTERM, dzięki czemu można go bezpiecznie zatrzymać w dowolnym momencie.

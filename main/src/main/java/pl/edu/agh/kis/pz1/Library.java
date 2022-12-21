@@ -273,9 +273,9 @@ public class Library {
         sb.append(" finished reading");
 
         writeToLoggerInfo(sb.toString());
+        readersCount--;
 
         readerAndWriterSemaphore.release();
-        readersCount--;
 
         librarySemaphore.release();
     }
@@ -286,9 +286,9 @@ public class Library {
         sb.append(" finished writing");
 
         writeToLoggerInfo(sb.toString());
+        writersCount--;
 
         readerAndWriterSemaphore.release(maxReaders);
-        writersCount--;
 
         librarySemaphore.release();
     }
